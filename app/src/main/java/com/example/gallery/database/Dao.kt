@@ -1,9 +1,7 @@
 package com.example.gallery.database
 
+import androidx.room.*
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
 import com.example.gallery.model.Photo
 
 @Dao
@@ -16,6 +14,8 @@ interface Dao {
     fun inserPref(dati : Photo?)
     @Query("select * from Photo where `preferiti` = 1")
     fun getPreferiti(): MutableList<Photo?>?
+    @Update
+    fun updatePref(pref:Photo)
 
 
 }

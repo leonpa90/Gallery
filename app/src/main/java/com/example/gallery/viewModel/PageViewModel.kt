@@ -18,6 +18,17 @@ class PageViewModel:ViewModel()
         databases.photoDao().inserPref(photo.also { it.preferiti=true }).let {
 
         }
+
     }
 }
+    fun updatePref(context: Context,photo: Photo)
+    {
+        val databases: DatabseImp = DatabseImp.createDatabase(context)
+        CoroutineScope(Dispatchers.IO).launch {
+            databases.photoDao().updatePref(photo.also { it.preferiti=false }).let {
+
+
+    }
+}
+    }
 }

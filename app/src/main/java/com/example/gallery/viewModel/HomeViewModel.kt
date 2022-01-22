@@ -36,14 +36,22 @@ class HomeViewModel:ViewModel()
         RetrofitClient.apiServices.searchPhotos(query).enqueue(object : retrofit2.Callback<PhotoResponse>{
             override fun onResponse(call: Call<PhotoResponse>, response: Response<PhotoResponse>) {
 // uso le extension per mappare la lista delle photo e faccio la lettura della response
-              photoData.value=  response.body()?.content?.children?.getPhotos()
-                CoroutineScope(Dispatchers.IO).launch {databases.photoDao().
-                insertDati(photoData.value?.
-                map {
-                    it?.also { it.query = query } }?.toMutableList())   }
+                var tempList : MutableList<Photo?>?
+                tempList=photoData.value
+                response.body()?.content?.children?.getPhotos()?.let {
+                    tempList?.addAll(it)
+                    tempList = tempList?.distinctBy { it?.id }?.toMutableList()
+                }
+                tempList.let { photoData.value =it }
+                if (photoData.value != null) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        databases.photoDao().insertDati(photoData.value?.map {
+                            it?.also { it.query = query }
+                        }?.toMutableList())
+                    }
 
+                }
             }
-
             override fun onFailure(call: Call<PhotoResponse>, t: Throwable) {
                 //perche in futuro potrei usare qesta eccezione per mostrare un errore specifico
                 errodata.value= t.cause
